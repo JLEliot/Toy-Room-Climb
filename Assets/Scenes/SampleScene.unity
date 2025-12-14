@@ -183,12 +183,26 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -6974041891263248070, guid: 8a86e2ae1fad5024dbe879a415f78383, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 23.3
+      objectReference: {fileID: 0}
+    - target: {fileID: -6974041891263248070, guid: 8a86e2ae1fad5024dbe879a415f78383, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 9.7
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 8a86e2ae1fad5024dbe879a415f78383, type: 3}
       propertyPath: m_Name
       value: Andy's Room
       objectReference: {fileID: 0}
+    - target: {fileID: 1242356039241078879, guid: 8a86e2ae1fad5024dbe879a415f78383, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 28.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 8353809423875116821, guid: 8a86e2ae1fad5024dbe879a415f78383, type: 3}
+    - {fileID: 4210543125555462608, guid: 8a86e2ae1fad5024dbe879a415f78383, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8a86e2ae1fad5024dbe879a415f78383, type: 3}
