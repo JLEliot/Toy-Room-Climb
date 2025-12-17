@@ -13,13 +13,11 @@ public class CameraOnlyUp : MonoBehaviour
     private float yaw;
     private float pitch = 10f;
 
+    private bool cursorLocked = true;
+
     void Start()
     {
-        // bloque le curseur (FPS/TPS style)
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
-        // initialise avec l'orientation actuelle
+        LockCursor();
         Vector3 angles = transform.eulerAngles;
         yaw = angles.y;
         pitch = angles.x;
@@ -27,15 +25,42 @@ public class CameraOnlyUp : MonoBehaviour
 
     void Update()
     {
-        // rotation horizontale
-        float mouseX = Input.GetAxis("Mouse X") * sensitivityX * Time.deltaTime;
-        yaw += mouseX;
+        // --- Échap : libère la souris
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            UnlockCursor();
+        }
 
-        // rotation verticale
+        // --- Clic gauche : rebloque la souris
+        if (Input.GetMouseButtonDown(0))
+        {
+            LockCursor();
+        }
+
+        // --- Si la souris est libérée, on ne tourne pas la caméra
+        if (!cursorLocked) return;
+
+        float mouseX = Input.GetAxis("Mouse X") * sensitivityX * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * sensitivityY * Time.deltaTime;
+
+        yaw += mouseX;
         pitch -= mouseY;
         pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
 
         transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
+    }
+
+    void LockCursor()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        cursorLocked = true;
+    }
+
+    void UnlockCursor()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        cursorLocked = false;
     }
 }
