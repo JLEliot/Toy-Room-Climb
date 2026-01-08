@@ -29,15 +29,38 @@ public class PlayerControllerCC : MonoBehaviour
     public float jumpHeight = 6f;
     public float gravity = -55f;
 
+    // ===== JumpPad / External impulse =====
+    [Header("External Launch (JumpPad)")]
+    [Tooltip("Smoothing de la poussée externe (plus grand = s'arrête plus vite)")]
+    public float externalDamping = 8f;
+
     private CharacterController controller;
     private Vector3 verticalVelocity;
     private Vector3 planarVelocity;
+
+    private Vector3 externalVelocity = Vector3.zero; // <-- impulsion du jump pad
 
     void Awake()
     {
         controller = GetComponent<CharacterController>();
         if (!animator) animator = GetComponentInChildren<Animator>();
         if (!cameraTransform && Camera.main) cameraTransform = Camera.main.transform;
+    }
+
+    /// <summary>
+    /// Appelé par JumpPad.cs
+    /// Donne une impulsion vers le haut + optionnel forward
+    /// </summary>
+    public void ExternalLaunch(float upSpeed, float forwardSpeed, Vector3 forwardDir)
+    {
+        // Reset vertical pour que la poussée soit bien "franche"
+        verticalVelocity.y = 0f;
+
+        // Ajoute une impulsion (velocity change)
+        externalVelocity = (Vector3.up * upSpeed) + (forwardDir.normalized * forwardSpeed);
+
+        // Optionnel : petit trigger anim si tu veux
+        if (animator) animator.SetTrigger("Jump");
     }
 
     void Update()
@@ -100,8 +123,6 @@ public class PlayerControllerCC : MonoBehaviour
             accel * Time.deltaTime
         );
 
-        controller.Move(planarVelocity * Time.deltaTime);
-
         // =========================
         // ROTATION (léger smoothing)
         // =========================
@@ -131,7 +152,19 @@ public class PlayerControllerCC : MonoBehaviour
         // GRAVITY
         // =========================
         verticalVelocity.y += gravity * Time.deltaTime;
-        controller.Move(verticalVelocity * Time.deltaTime);
+
+        // =========================
+        // FINAL MOVE (planar + vertical + external)
+        // =========================
+        Vector3 finalMove =
+            planarVelocity +
+            verticalVelocity +
+            externalVelocity;
+
+        controller.Move(finalMove * Time.deltaTime);
+
+        // Damping de la poussée externe (pour pas rester boosté)
+        externalVelocity = Vector3.Lerp(externalVelocity, Vector3.zero, externalDamping * Time.deltaTime);
 
         // =========================
         // ANIMATOR PARAMETERS
