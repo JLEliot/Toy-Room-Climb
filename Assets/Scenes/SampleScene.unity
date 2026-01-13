@@ -1907,7 +1907,7 @@ MonoBehaviour:
   headRayHeight: 2.5
   climbSpeed: 5
   rootMotionVerticalBoost: 2
-  rootMotionForwardBoost: 2
+  rootMotionForwardBoost: 1
   climbCooldown: 3
 --- !u!143 &1775789150
 CharacterController:
