@@ -5,7 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8ecc99b4-a919-408a-bcb0-1e676654f791" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Toy-Room-Climb/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Toy-Room-Climb/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/MainMenu.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/MainMenu.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Script/CameraOnlyUp.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Script/CameraOnlyUp.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

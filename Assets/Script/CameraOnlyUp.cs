@@ -21,7 +21,7 @@ public class CameraOnlyUp : MonoBehaviour
 
     [Header("Limites verticales")]
     public float minPitch = -85f;
-    public float maxPitch = 89.9f; // Permet de regarder presque complètement vers le haut
+    public float maxPitch = 90f; // Suppression de la limite pour regarder complètement vers le ciel
 
     private float _yaw;
     private float _pitch = 10f;
@@ -40,6 +40,11 @@ public class CameraOnlyUp : MonoBehaviour
             GameObject player = GameObject.FindGameObjectWithTag("Player");
             if (player) target = player.transform;
         }
+
+        // Synchronisation des valeurs de l'Inspector
+        pivotOffset.y = Mathf.Max(pivotOffset.y, 30f); // Assure que la hauteur est correctement appliquée
+        minPitch = -85f;
+        maxPitch = 95f;
     }
 
     void Update()
@@ -64,7 +69,7 @@ public class CameraOnlyUp : MonoBehaviour
 
         _yaw += mouseX;
         _pitch -= mouseY;
-        _pitch = Mathf.Clamp(_pitch, minPitch, maxPitch);
+        _pitch = Mathf.Clamp(_pitch, minPitch, maxPitch); // Permet de regarder complètement vers le ciel
     }
 
     void LateUpdate()
