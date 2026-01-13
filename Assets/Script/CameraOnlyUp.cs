@@ -4,7 +4,7 @@ public class CameraOnlyUp : MonoBehaviour
 {
     [Header("Suivi cible")]
     public Transform target;
-    public Vector3 pivotOffset = new Vector3(0f, 1.6f, 0f);
+    public Vector3 pivotOffset = new Vector3(0f, 2.1f, 0f);
     public float distance = 4f;
     public float minDistance = 1.2f;
     public float maxDistance = 6f;
@@ -12,6 +12,7 @@ public class CameraOnlyUp : MonoBehaviour
 
     [Header("Collision caméra")]
     public float collisionRadius = 0.3f;
+    public float collisionBuffer = 0.15f;
     public LayerMask collisionMask = ~0;
 
     [Header("Sensibilité souris")]
@@ -19,8 +20,8 @@ public class CameraOnlyUp : MonoBehaviour
     public float sensitivityY = 140f;
 
     [Header("Limites verticales")]
-    public float minPitch = -80f;
-    public float maxPitch = 85f;
+    public float minPitch = -85f;
+    public float maxPitch = 88f;
 
     private float yaw;
     private float pitch = 10f;
@@ -86,7 +87,7 @@ public class CameraOnlyUp : MonoBehaviour
             QueryTriggerInteraction.Ignore
         ))
         {
-            correctedDistance = Mathf.Clamp(hit.distance, minDistance, maxDistance);
+            correctedDistance = Mathf.Clamp(hit.distance - collisionBuffer, minDistance, maxDistance);
         }
 
         Vector3 finalPosition = pivot + desiredDirection * correctedDistance;
