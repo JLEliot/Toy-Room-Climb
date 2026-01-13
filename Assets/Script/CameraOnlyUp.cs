@@ -20,8 +20,8 @@ public class CameraOnlyUp : MonoBehaviour
     public float sensitivityY = 140f;
 
     [Header("Limites verticales")]
-    public float minPitch = -85f;
-    public float maxPitch = 90f; // Suppression de la limite pour regarder complètement vers le ciel
+    public float minPitch = -70f;
+    public float maxPitch = 70f; // Suppression de la limite pour regarder complètement vers le ciel
 
     private float _yaw;
     private float _pitch = 10f;

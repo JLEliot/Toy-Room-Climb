@@ -5,9 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8ecc99b4-a919-408a-bcb0-1e676654f791" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/MainMenu.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/MainMenu.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Toy-Room-Climb/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Toy-Room-Climb/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Script/CameraOnlyUp.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Script/CameraOnlyUp.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/UI/Fonts/TMP/LuckiestGuy-Regular SDF.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UI/Fonts/TMP/LuckiestGuy-Regular SDF.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/UI/Fonts/TMP/LuckiestGuy_ToyStory.mat.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UI/Fonts/TMP/LuckiestGuy_ToyStory.mat.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,6 +39,7 @@
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.MCP Project settings loaded": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "dart.analysis.tool.window.visible": "false",
@@ -53,7 +55,7 @@
 }]]></component>
   <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor">
     <configuration name="Start Unity" type="RunUnityExe" factoryName="Unity Executable">
-      <option name="EXE_PATH" value="C:\Program Files\Unity\Hub\Editor\6000.2.13f1\Editor\Unity.exe" />
+      <option name="EXE_PATH" value="E:\Unity\6000.2.13f1\Editor\Unity.exe" />
       <option name="PROGRAM_PARAMETERS" value="-projectPath &quot;E:\2eme annee\Toy-Room-Climb\Toy-Room-Climb&quot; -debugCodeOptimization" />
       <option name="WORKING_DIRECTORY" value="E:\2eme annee\Toy-Room-Climb\Toy-Room-Climb" />
       <option name="PASS_PARENT_ENVS" value="1" />
@@ -63,7 +65,7 @@
       <method v="2" />
     </configuration>
     <configuration name="Unit Tests (batch mode)" type="RunUnityExe" factoryName="Unity Executable">
-      <option name="EXE_PATH" value="C:\Program Files\Unity\Hub\Editor\6000.2.13f1\Editor\Unity.exe" />
+      <option name="EXE_PATH" value="E:\Unity\6000.2.13f1\Editor\Unity.exe" />
       <option name="PROGRAM_PARAMETERS" value="-runTests -batchmode -projectPath &quot;E:\2eme annee\Toy-Room-Climb\Toy-Room-Climb&quot; -testResults Logs/results.xml -logFile Logs/Editor.log -testPlatform EditMode -debugCodeOptimization" />
       <option name="WORKING_DIRECTORY" value="E:\2eme annee\Toy-Room-Climb\Toy-Room-Climb" />
       <option name="PASS_PARENT_ENVS" value="1" />
@@ -100,6 +102,7 @@
       <workItem from="1765792390645" duration="1842000" />
       <workItem from="1765987904895" duration="1469000" />
       <workItem from="1767874641369" duration="2631000" />
+      <workItem from="1768343355679" duration="206000" />
     </task>
     <servers />
   </component>
@@ -137,5 +140,13 @@
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
     <select />
+  </component>
+  <component name="github-copilot-workspace">
+    <instructionFileLocations>
+      <option value=".github/instructions" />
+    </instructionFileLocations>
+    <promptFileLocations>
+      <option value=".github/prompts" />
+    </promptFileLocations>
   </component>
 </project>
