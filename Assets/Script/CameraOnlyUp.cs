@@ -4,7 +4,7 @@ public class CameraOnlyUp : MonoBehaviour
 {
     [Header("Suivi cible")]
     public Transform target;
-    public Vector3 pivotOffset = new Vector3(0f, 2.1f, 0f);
+    public Vector3 pivotOffset = new Vector3(0f, 1.5f, 0f); // Ajustement pour que la caméra soit au niveau de la tête ou du torse
     public float distance = 4f;
     public float minDistance = 1.2f;
     public float maxDistance = 6f;
@@ -21,19 +21,19 @@ public class CameraOnlyUp : MonoBehaviour
 
     [Header("Limites verticales")]
     public float minPitch = -85f;
-    public float maxPitch = 88f;
+    public float maxPitch = 89.9f; // Permet de regarder presque complètement vers le haut
 
-    private float yaw;
-    private float pitch = 10f;
+    private float _yaw;
+    private float _pitch = 10f;
 
-    private bool cursorLocked = true;
+    private bool _cursorLocked = true;
 
     void Start()
     {
         LockCursor();
         Vector3 angles = transform.eulerAngles;
-        yaw = angles.y;
-        pitch = angles.x;
+        _yaw = angles.y;
+        _pitch = angles.x;
 
         if (!target)
         {
@@ -57,26 +57,27 @@ public class CameraOnlyUp : MonoBehaviour
         }
 
         // --- Si la souris est libérée, on ne tourne pas la caméra
-        if (!cursorLocked) return;
+        if (!_cursorLocked) return;
 
         float mouseX = Input.GetAxis("Mouse X") * sensitivityX * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * sensitivityY * Time.deltaTime;
 
-        yaw += mouseX;
-        pitch -= mouseY;
-        pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
+        _yaw += mouseX;
+        _pitch -= mouseY;
+        _pitch = Mathf.Clamp(_pitch, minPitch, maxPitch);
     }
 
     void LateUpdate()
     {
         if (!target) return;
 
-        Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
+        Quaternion rotation = Quaternion.Euler(_pitch, _yaw, 0f);
         Vector3 pivot = target.position + pivotOffset;
 
         float desiredDistance = Mathf.Clamp(distance, minDistance, maxDistance);
         Vector3 desiredDirection = rotation * Vector3.back;
         float correctedDistance = desiredDistance;
+
         if (Physics.SphereCast(
             pivot,
             collisionRadius,
@@ -99,13 +100,13 @@ public class CameraOnlyUp : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        cursorLocked = true;
+        _cursorLocked = true;
     }
 
     void UnlockCursor()
     {
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-        cursorLocked = false;
+        _cursorLocked = false;
     }
 }
