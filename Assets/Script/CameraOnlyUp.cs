@@ -43,8 +43,8 @@ public class CameraOnlyUp : MonoBehaviour
 
         // Synchronisation des valeurs de l'Inspector
         pivotOffset.y = Mathf.Max(pivotOffset.y, 30f); // Assure que la hauteur est correctement appliquée
-        minPitch = -85f;
-        maxPitch = 95f;
+        minPitch = -70f;
+        maxPitch = 70f;
     }
 
     void Update()
