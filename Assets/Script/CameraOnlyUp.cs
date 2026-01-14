@@ -30,7 +30,15 @@ public class CameraOnlyUp : MonoBehaviour
 
     void Start()
     {
-        LockCursor();
+        if (lockCursorOnStart)
+        {
+            LockCursor();
+        }
+        else
+        {
+            UnlockCursor();
+        }
+        
         Vector3 angles = transform.eulerAngles;
         _yaw = angles.y;
         _pitch = angles.x;
@@ -49,16 +57,19 @@ public class CameraOnlyUp : MonoBehaviour
 
     void Update()
     {
-        // --- Échap : libère la souris
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (allowCursorToggle)
         {
-            UnlockCursor();
-        }
+            // --- Échap : libère la souris
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                UnlockCursor();
+            }
 
-        // --- Clic gauche : rebloque la souris
-        if (Input.GetMouseButtonDown(0))
-        {
-            LockCursor();
+            // --- Clic gauche : rebloque la souris
+            if (Input.GetMouseButtonDown(0))
+            {
+                LockCursor();
+            }
         }
 
         // --- Si la souris est libérée, on ne tourne pas la caméra
