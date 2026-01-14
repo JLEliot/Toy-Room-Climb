@@ -21,27 +21,15 @@ public class CameraOnlyUp : MonoBehaviour
 
     [Header("Limites verticales")]
     public float minPitch = -70f;
-    public float maxPitch = 70f; // Suppression de la limite pour regarder complètement vers le ciel
+    public float maxPitch = 70f;
 
     private float _yaw;
     private float _pitch = 10f;
 
-    private bool _cursorLocked = true;
-    
-    [SerializeField] private bool lockCursorOnStart = true;
-    [SerializeField] private bool allowCursorToggle = true;
+    private bool _cursorLocked = false;
 
     void Start()
     {
-        if (lockCursorOnStart)
-        {
-            LockCursor();
-        }
-        else
-        {
-            UnlockCursor();
-        }
-        
         Vector3 angles = transform.eulerAngles;
         _yaw = angles.y;
         _pitch = angles.x;
@@ -60,22 +48,10 @@ public class CameraOnlyUp : MonoBehaviour
 
     void Update()
     {
-        if (allowCursorToggle)
-        {
-            // --- Échap : libère la souris
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                UnlockCursor();
-            }
-
-            // --- Clic gauche : rebloque la souris
-            if (Input.GetMouseButtonDown(0))
-            {
-                LockCursor();
-            }
-        }
-
-        // --- Si la souris est libérée, on ne tourne pas la caméra
+        // Vérifier si la souris est verrouillée pour tourner la caméra
+        _cursorLocked = Cursor.lockState == CursorLockMode.Locked;
+        
+        // Si la souris est libérée, on ne tourne pas la caméra
         if (!_cursorLocked) return;
 
         float mouseX = Input.GetAxis("Mouse X") * sensitivityX * Time.deltaTime;
@@ -83,7 +59,7 @@ public class CameraOnlyUp : MonoBehaviour
 
         _yaw += mouseX;
         _pitch -= mouseY;
-        _pitch = Mathf.Clamp(_pitch, minPitch, maxPitch); // Permet de regarder complètement vers le ciel
+        _pitch = Mathf.Clamp(_pitch, minPitch, maxPitch);
     }
 
     void LateUpdate()
@@ -113,19 +89,5 @@ public class CameraOnlyUp : MonoBehaviour
         Vector3 finalPosition = pivot + desiredDirection * correctedDistance;
         transform.position = Vector3.Lerp(transform.position, finalPosition, followSmooth * Time.deltaTime);
         transform.rotation = rotation;
-    }
-
-    void LockCursor()
-    {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-        _cursorLocked = true;
-    }
-
-    void UnlockCursor()
-    {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-        _cursorLocked = false;
     }
 }
