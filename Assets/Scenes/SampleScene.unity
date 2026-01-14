@@ -3060,7 +3060,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraOnlyUp
   target: {fileID: 0}
-  pivotOffset: {x: 0, y: 30, z: 0}
+  pivotOffset: {x: 0, y: 1.5, z: 0}
   distance: 4
   minDistance: 1.2
   maxDistance: 6
@@ -5358,6 +5358,51 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -1274251057333091914, guid: 8a86e2ae1fad5024dbe879a415f78383, type: 3}
+--- !u!1 &1311362676
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1311362678}
+  - component: {fileID: 1311362677}
+  m_Layer: 0
+  m_Name: GameplayCursorManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1311362677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1311362676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdb305eb12ee45869b0ec85ed009b4af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Script.UI.GameplayCursorManager
+  allowCursorToggle: 1
+--- !u!4 &1311362678
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1311362676}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1322180398
 GameObject:
   m_ObjectHideFlags: 0
@@ -6397,6 +6442,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: bcdfccbaabeaf6648854bbcf14945abd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 531982743}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: bcdfccbaabeaf6648854bbcf14945abd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1977865734}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bcdfccbaabeaf6648854bbcf14945abd, type: 3}
 --- !u!4 &1684497737 stripped
@@ -7169,6 +7217,59 @@ MonoBehaviour:
   upwardSpeed: 2500
   forwardSpeed: 5
   cooldown: 0.25
+--- !u!1 &1977865733
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1977865734}
+  - component: {fileID: 1977865735}
+  m_Layer: 0
+  m_Name: collider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1977865734
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1977865733}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.03, y: 0, z: -0.558}
+  m_LocalScale: {x: 1, y: 1, z: 0.054039}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1684497737}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1977865735
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1977865733}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1978767682 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 9124106349443298634, guid: 8a86e2ae1fad5024dbe879a415f78383, type: 3}
@@ -7616,3 +7717,4 @@ SceneRoots:
   - {fileID: 155148123}
   - {fileID: 452002652}
   - {fileID: 1429464292}
+  - {fileID: 1311362678}
