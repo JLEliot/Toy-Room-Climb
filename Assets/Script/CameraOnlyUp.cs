@@ -27,6 +27,9 @@ public class CameraOnlyUp : MonoBehaviour
     private float _pitch = 10f;
 
     private bool _cursorLocked = true;
+    
+    [SerializeField] private bool lockCursorOnStart = true;
+    [SerializeField] private bool allowCursorToggle = true;
 
     void Start()
     {
