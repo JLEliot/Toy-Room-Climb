@@ -13,11 +13,26 @@ public class CameraOnlyUp : MonoBehaviour
     private float yaw;
     private float pitch = 10f;
 
-    private bool cursorLocked = true;
+     [Header("Curseur")]
+        [Tooltip("Verrouille la souris au démarrage (utile en gameplay).")]
+        [SerializeField] private bool lockCursorOnStart = false;
+    
+        [Tooltip("Autorise Échap/clic gauche pour verrouiller/déverrouiller la souris.")]
+        [SerializeField] private bool allowCursorToggle = false;
+    
+        private bool cursorLocked;
 
     void Start()
     {
-        LockCursor();
+        if (lockCursorOnStart)
+        {
+            LockCursor();
+        }
+        else
+        {
+            UnlockCursor();
+        }
+        
         Vector3 angles = transform.eulerAngles;
         yaw = angles.y;
         pitch = angles.x;
@@ -25,20 +40,23 @@ public class CameraOnlyUp : MonoBehaviour
 
     void Update()
     {
-        // --- Échap : libère la souris
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (allowCursorToggle)
         {
-            UnlockCursor();
+            // --- Échap : libère la souris
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                UnlockCursor();
+            }
+
+            // --- Clic gauche : rebloque la souris
+            if (Input.GetMouseButtonDown(0))
+            {
+                LockCursor();
+            }
         }
 
-        // --- Clic gauche : rebloque la souris
-        if (Input.GetMouseButtonDown(0))
-        {
-            LockCursor();
-        }
-
-        // --- Si la souris est libérée, on ne tourne pas la caméra
-        if (!cursorLocked) return;
+        // --- Si la souris est libérée en mode verrouillé, on ne tourne pas la caméra
+        if (lockCursorOnStart && !cursorLocked) return;
 
         float mouseX = Input.GetAxis("Mouse X") * sensitivityX * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * sensitivityY * Time.deltaTime;
