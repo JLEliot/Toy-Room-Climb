@@ -2310,6 +2310,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Script.UI.MainMenuController
   gameplaySceneName: SampleScene
+  gameplaySceneName2: COCHONPLATFORME
 --- !u!4 &2061831798
 Transform:
   m_ObjectHideFlags: 0
