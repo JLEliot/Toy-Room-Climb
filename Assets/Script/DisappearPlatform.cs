@@ -3,64 +3,70 @@ using UnityEngine;
 
 public class DisappearPlatform : MonoBehaviour
 {
-    [Header("Réglages")]
-    public float delayBeforeDisappear = 0.3f;
-    public float respawnDelay = 2.0f;
-    public bool respawn = true;
+    [Header("Timing")]
+    [Tooltip("Temps avant que la plateforme disparaisse")]
+    public float delayBeforeDisappear = 0.15f;
 
-    [Header("Références")]
-    [Tooltip("Objet visible (MeshRenderer). Si vide, prend ceux du parent.")]
-    public Renderer[] renderersToHide;
+    [Tooltip("Temps avant réapparition")]
+    public float respawnAfter = 5f; // ⬅️ 5 secondes
 
-    [Tooltip("Collider solide de la plateforme (pas trigger). Si vide, cherche sur le parent.")]
-    public Collider solidCollider;
+    [Header("What to disable")]
+    public GameObject visualsRoot;          
+    public Collider solidColliderToDisable; 
+    public Collider triggerCollider;        
 
-    private bool triggered = false;
+    private bool isRunning;
 
     void Awake()
     {
-        // Auto-find si pas assigné
-        if (solidCollider == null)
-            solidCollider = GetComponentInParent<Collider>();
+        if (visualsRoot == null)
+            visualsRoot = gameObject;
 
-        if (renderersToHide == null || renderersToHide.Length == 0)
-            renderersToHide = GetComponentsInParent<Renderer>();
+        // Auto-détection des colliders
+        Collider[] cols = GetComponents<Collider>();
+        foreach (var c in cols)
+        {
+            if (c.isTrigger)
+            {
+                if (triggerCollider == null)
+                    triggerCollider = c;
+            }
+            else
+            {
+                if (solidColliderToDisable == null)
+                    solidColliderToDisable = c;
+            }
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (triggered) return;
+        if (isRunning) return;
 
         if (!other.CompareTag("Player")) return;
 
-        triggered = true;
         StartCoroutine(DisappearRoutine());
     }
 
     private IEnumerator DisappearRoutine()
     {
+        isRunning = true;
+
         yield return new WaitForSeconds(delayBeforeDisappear);
 
-        // Cache visuel
-        foreach (var r in renderersToHide)
-            r.enabled = false;
+        // Disparition
+        visualsRoot.SetActive(false);
+        if (solidColliderToDisable) solidColliderToDisable.enabled = false;
+        if (triggerCollider) triggerCollider.enabled = false;
 
-        // Désactive collision solide
-        if (solidCollider != null)
-            solidCollider.enabled = false;
+        // Attente avant respawn
+        yield return new WaitForSeconds(respawnAfter);
 
-        if (respawn)
-        {
-            yield return new WaitForSeconds(respawnDelay);
+        // Réapparition
+        visualsRoot.SetActive(true);
+        if (solidColliderToDisable) solidColliderToDisable.enabled = true;
+        if (triggerCollider) triggerCollider.enabled = true;
 
-            // Réactive
-            foreach (var r in renderersToHide)
-                r.enabled = true;
-
-            if (solidCollider != null)
-                solidCollider.enabled = true;
-
-            triggered = false;
-        }
+        isRunning = false;
     }
 }
