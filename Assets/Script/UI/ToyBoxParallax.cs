@@ -2,10 +2,16 @@ using UnityEngine;
 
 namespace Script.UI
 {
+    /// <summary>
+    /// Effet de parallax léger sur un RectTransform (menu).
+    /// </summary>
     public class ToyBoxParallax : MonoBehaviour
     {
+        [Tooltip("RectTransform cible à déplacer (optionnel).")]
         [SerializeField] private RectTransform target;
+        [Tooltip("Amplitude du mouvement en pixels.")]
         [SerializeField] private float amplitude = 10f;
+        [Tooltip("Vitesse du mouvement de parallax.")]
         [SerializeField] private float speed = 0.8f;
 
         private Vector2 _start;

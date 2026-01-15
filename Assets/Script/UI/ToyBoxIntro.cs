@@ -2,26 +2,41 @@ using UnityEngine;
 
 namespace Script.UI
 {
+    /// <summary>
+    /// Anime l'apparition d'un container UI (pop + settle + fade).
+    /// </summary>
     public class ToyBoxIntro : MonoBehaviour
     {
         [Header("Références")]
+        [Tooltip("Racine du bloc UI à animer.")]
         [SerializeField] private RectTransform toyBoxRoot;
+        [Tooltip("CanvasGroup de l'inner box (optionnel).")]
         [SerializeField] private CanvasGroup innerGroup;   // BoxInner (optionnel)
+        [Tooltip("CanvasGroup du label (optionnel).")]
         [SerializeField] private CanvasGroup labelGroup;   // LabelTag (optionnel)
+        [Tooltip("CanvasGroup du groupe de boutons (optionnel).")]
         [SerializeField] private CanvasGroup buttonsGroup; // ButtonsGroup (optionnel)
 
         [Header("Timing")]
+        [Tooltip("Délai avant le démarrage de l'intro.")]
         [SerializeField] private float startDelay = 0.05f;
+        [Tooltip("Durée du pop (scale initial -> overshoot).")]
         [SerializeField] private float popDuration = 0.35f;
+        [Tooltip("Durée du settle (overshoot -> scale final).")]
         [SerializeField] private float settleDuration = 0.18f;
 
         [Header("Scale")]
+        [Tooltip("Scale initiale avant le pop.")]
         [SerializeField] private float startScale = 0.85f;
+        [Tooltip("Scale d'overshoot (rebond).")]
         [SerializeField] private float overshootScale = 1.06f;
+        [Tooltip("Scale finale.")]
         [SerializeField] private float endScale = 1.0f;
 
         [Header("Fade (optionnel)")]
+        [Tooltip("Délai avant le fade des éléments internes.")]
         [SerializeField] private float fadeDelay = 0.12f;
+        [Tooltip("Durée du fade-in.")]
         [SerializeField] private float fadeDuration = 0.25f;
 
         private void Reset()
@@ -46,6 +61,9 @@ namespace Script.UI
             StartCoroutine(PlayIntro());
         }
 
+        /// <summary>
+        /// Joue l'animation d'intro complète (pop + settle + fade).
+        /// </summary>
         private System.Collections.IEnumerator PlayIntro()
         {
             // petite pause
@@ -80,6 +98,9 @@ namespace Script.UI
             if (buttonsGroup) buttonsGroup.alpha = 1f;
         }
 
+        /// <summary>
+        /// Interpole l'échelle d'un RectTransform sur une durée donnée.
+        /// </summary>
         private static System.Collections.IEnumerator ScaleTo(RectTransform rt, float from, float to, float duration)
         {
             duration = Mathf.Max(0.0001f, duration);

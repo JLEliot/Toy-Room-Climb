@@ -2,46 +2,69 @@
 using UnityEngine.InputSystem;
 using System.Collections;
 
+/// <summary>
+/// Contrôleur joueur basé sur CharacterController : déplacement, saut,
+/// ledge grab/mantle et impulsion externe (JumpPad).
+/// </summary>
 [RequireComponent(typeof(CharacterController))]
 public class PlayerControllerCC : MonoBehaviour
 {
     [Header("References")]
+    [Tooltip("Caméra utilisée pour l'orientation du déplacement.")]
     public Transform cameraTransform;
+    [Tooltip("Animator du personnage (optionnel, auto-récupéré si vide).")]
     public Animator animator;
 
     [Header("Movement")]
+    [Tooltip("Vitesse de déplacement au sol.")]
     public float moveSpeed = 60f;
+    [Tooltip("Vitesse de rotation vers la direction de déplacement.")]
     public float rotationSpeed = 20f;
+    [Tooltip("Accélération au sol lors d'une entrée de mouvement.")]
     public float groundAcceleration = 120f;
+    [Tooltip("Décélération au sol lorsque l'entrée s'arrête.")]
     public float groundDeceleration = 160f;
+    [Tooltip("Multiplicateur de vitesse en l'air.")]
     public float airSpeedMultiplier = 0.65f;
+    [Tooltip("Accélération en l'air.")]
     public float airAcceleration = 40f;
+    [Tooltip("Hauteur de saut (en unités Unity).")]
     public float jumpHeight = 6f;
+    [Tooltip("Gravité appliquée (valeur négative).")]
     public float gravity = -55f;
 
     [Header("Ledge Detection (Omni + Filtré)")]
+    [Tooltip("Couches détectées comme grimpables.")]
     public LayerMask climbLayer;
-    public float detectionRadius = 1.5f; 
-    public float bodyRayHeight = 1.0f; 
-    public float headRayHeight = 2.5f; 
-    
-    [Tooltip("Hauteur minimum du rebord par rapport aux pieds. 0.5 = genoux.")]
-    public float minLedgeHeight = 0.5f; 
+    [Tooltip("Rayon de détection des surfaces grimpables.")]
+    public float detectionRadius = 1.5f;
+    [Tooltip("Hauteur d'origine du cast à hauteur du corps.")]
+    public float bodyRayHeight = 1.0f;
+    [Tooltip("Hauteur d'origine du cast à hauteur de tête.")]
+    public float headRayHeight = 2.5f;
 
-    public float climbSpeed = 5f; 
+    [Tooltip("Hauteur minimum du rebord par rapport aux pieds. 0.5 = genoux.")]
+    public float minLedgeHeight = 0.5f;
+
+    [Tooltip("Vitesse de climb (réservée, si animation root motion).")]
+    public float climbSpeed = 5f;
 
     [Header("Animation Tuning")]
-    public float rootMotionVerticalBoost = 1.0f; 
-    public float rootMotionForwardBoost = 1.0f; 
+    [Tooltip("Boost vertical appliqué au root motion lors du mantle.")]
+    public float rootMotionVerticalBoost = 1.0f;
+    [Tooltip("Boost forward appliqué au root motion lors du mantle.")]
+    public float rootMotionForwardBoost = 1.0f;
 
     [Header("Cooldown")]
-    public float climbCooldown = 3.0f; 
-    private float finishClimbTime = -999f; 
+    [Tooltip("Temps d'attente entre deux mantles successifs.")]
+    public float climbCooldown = 3.0f;
+    private float finishClimbTime = -999f;
 
     // --- CODE JUMP PAD ---
     [Header("External Launch (JumpPad)")]
+    [Tooltip("Amortissement de la vélocité externe (retour à zéro).")]
     public float externalDamping = 8f;
-    private Vector3 externalVelocity = Vector3.zero; 
+    private Vector3 externalVelocity = Vector3.zero;
     // ---------------------
 
     private bool canGrabLedge = false;
@@ -54,13 +77,19 @@ public class PlayerControllerCC : MonoBehaviour
     
     private RaycastHit omniHitInfo; 
 
-    void Awake()
+    private void Awake()
     {
         controller = GetComponent<CharacterController>();
         if (!animator) animator = GetComponentInChildren<Animator>();
         if (!cameraTransform && Camera.main) cameraTransform = Camera.main.transform;
     }
 
+    /// <summary>
+    /// Applique une impulsion externe (ex. JumpPad) sans modifier les inputs.
+    /// </summary>
+    /// <param name="upSpeed">Vitesse verticale ajoutée.</param>
+    /// <param name="forwardSpeed">Vitesse horizontale ajoutée (direction forwardDir).</param>
+    /// <param name="forwardDir">Direction horizontale du push.</param>
     public void ExternalLaunch(float upSpeed, float forwardSpeed, Vector3 forwardDir)
     {
         verticalVelocity = Vector3.zero; 
@@ -68,7 +97,7 @@ public class PlayerControllerCC : MonoBehaviour
         if (animator) animator.SetTrigger("Jump"); 
     }
 
-    void Update()
+    private void Update()
     {
         externalVelocity = Vector3.Lerp(externalVelocity, Vector3.zero, externalDamping * Time.deltaTime);
 
@@ -105,7 +134,10 @@ public class PlayerControllerCC : MonoBehaviour
         UpdateAnimator(isGrounded);
     }
 
-    void DetectLedgeAround()
+    /// <summary>
+    /// Détecte une surface grimpable autour du joueur et prépare les infos de mantle.
+    /// </summary>
+    private void DetectLedgeAround()
     {
         canGrabLedge = false;
         float scaleY = transform.localScale.y;
@@ -141,7 +173,10 @@ public class PlayerControllerCC : MonoBehaviour
     }
 
     // --- DEBUG CORRIGÉ ---
-    void OnDrawGizmos()
+    /// <summary>
+    /// Affichage debug : zone de détection et point de ledge.
+    /// </summary>
+    private void OnDrawGizmos()
     {
         if (transform == null) return;
 
@@ -164,7 +199,10 @@ public class PlayerControllerCC : MonoBehaviour
         }
     }
 
-    void OnAnimatorMove()
+    /// <summary>
+    /// Applique le root motion lors du mantle (si l'animation le fournit).
+    /// </summary>
+    private void OnAnimatorMove()
     {
         if (isMantling && animator)
         {
@@ -178,7 +216,10 @@ public class PlayerControllerCC : MonoBehaviour
         }
     }
 
-    IEnumerator MantleRoutine()
+    /// <summary>
+    /// Routine d'animation de montée sur rebord (mantle).
+    /// </summary>
+    private IEnumerator MantleRoutine()
     {
         isMantling = true; 
         isClimbing = false; 
@@ -208,7 +249,10 @@ public class PlayerControllerCC : MonoBehaviour
         verticalVelocity = Vector3.zero; 
     }
 
-    Vector2 GetInput() {
+    /// <summary>
+    /// Récupère un input WASD/ZQSD normalisé.
+    /// </summary>
+    private Vector2 GetInput() {
         Vector2 input = Vector2.zero;
         if (Keyboard.current != null) {
             if (Keyboard.current.wKey.isPressed || Keyboard.current.zKey.isPressed) input.y += 1f;
@@ -219,11 +263,17 @@ public class PlayerControllerCC : MonoBehaviour
         return Vector2.ClampMagnitude(input, 1f);
     }
 
-    void StartClimbing() { isClimbing = true; verticalVelocity = Vector3.zero; planarVelocity = Vector3.zero; }
+    /// <summary>
+    /// Démarre l'état de climb (sans jouer d'anim).
+    /// </summary>
+    private void StartClimbing() { isClimbing = true; verticalVelocity = Vector3.zero; planarVelocity = Vector3.zero; }
 
-    void HandleClimbing(Vector2 input, bool jumpPressed, RaycastHit wallHit) { }
+    private void HandleClimbing(Vector2 input, bool jumpPressed, RaycastHit wallHit) { }
 
-    void HandleWalking(Vector2 input, bool isGrounded, bool jumpPressed) {
+    /// <summary>
+    /// Gère le déplacement standard au sol et en l'air.
+    /// </summary>
+    private void HandleWalking(Vector2 input, bool isGrounded, bool jumpPressed) {
         if (isGrounded && verticalVelocity.y < 0f) verticalVelocity.y = -2f;
         
         Vector3 camForward = cameraTransform ? cameraTransform.forward : Vector3.forward;
@@ -255,7 +305,10 @@ public class PlayerControllerCC : MonoBehaviour
         verticalVelocity.y += gravity * Time.deltaTime;
     }
 
-    void UpdateAnimator(bool isGrounded) {
+    /// <summary>
+    /// Met à jour les paramètres d'animation basés sur la vélocité.
+    /// </summary>
+    private void UpdateAnimator(bool isGrounded) {
         if (!animator) return;
         float speed01 = Mathf.Clamp01(new Vector3(planarVelocity.x, 0f, planarVelocity.z).magnitude / moveSpeed);
         animator.SetFloat("Speed", speed01);

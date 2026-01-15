@@ -3,21 +3,34 @@ using UnityEngine.EventSystems;
 
 namespace Script.UI
 {
+    /// <summary>
+    /// Ajoute un feedback visuel (scale/rotation) et audio aux boutons UI.
+    /// </summary>
     public class ToyButtonFX : MonoBehaviour,
         IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
     {
         [Header("Feel 'toy/cartoon'")]
+        [Tooltip("Scale appliquée au survol.")]
         [SerializeField] private float hoverScale = 1.08f;
+        [Tooltip("Scale appliquée lors du press.")]
         [SerializeField] private float pressScale = 0.95f;
+        [Tooltip("Vitesse d'interpolation des transitions.")]
         [SerializeField] private float speed = 16f;
+        [Tooltip("Amplitude de la rotation oscillante (en degrés).")]
         [SerializeField] private float wobbleDegrees = 3.0f;
+        [Tooltip("Vitesse de l'oscillation.")]
         [SerializeField] private float wobbleSpeed = 14f;
 
         [Header("Audio (optionnel)")]
+        [Tooltip("Source audio utilisée pour jouer les sons.")]
         [SerializeField] private AudioSource audioSource;
+        [Tooltip("Clip joué au survol.")]
         [SerializeField] private AudioClip hoverClip;
+        [Tooltip("Clip joué au clic.")]
         [SerializeField] private AudioClip clickClip;
+        [Tooltip("Volume du son de survol.")]
         [SerializeField] private float hoverVolume = 0.7f;
+        [Tooltip("Volume du son de clic.")]
         [SerializeField] private float clickVolume = 0.9f;
 
         private Vector3 _baseScale;
