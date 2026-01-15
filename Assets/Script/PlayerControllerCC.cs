@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerControllerCC : MonoBehaviour
@@ -11,34 +12,47 @@ public class PlayerControllerCC : MonoBehaviour
     [Header("Movement")]
     public float moveSpeed = 60f;
     public float rotationSpeed = 20f;
-
-    [Tooltip("Accélération au sol (léger smoothing ~200ms)")]
     public float groundAcceleration = 120f;
-
-    [Tooltip("Décélération au sol")]
     public float groundDeceleration = 160f;
-
-    [Header("Air Control")]
-    [Tooltip("Multiplicateur de vitesse en l'air")]
     public float airSpeedMultiplier = 0.65f;
-
-    [Tooltip("Accélération en l'air")]
     public float airAcceleration = 40f;
-
-    [Header("Jump & Gravity")]
     public float jumpHeight = 6f;
     public float gravity = -55f;
 
-    // ===== JumpPad / External impulse =====
+    [Header("Ledge Detection (Omni + Filtré)")]
+    public LayerMask climbLayer;
+    public float detectionRadius = 1.5f; 
+    public float bodyRayHeight = 1.0f; 
+    public float headRayHeight = 2.5f; 
+    
+    [Tooltip("Hauteur minimum du rebord par rapport aux pieds. 0.5 = genoux.")]
+    public float minLedgeHeight = 0.5f; 
+
+    public float climbSpeed = 5f; 
+
+    [Header("Animation Tuning")]
+    public float rootMotionVerticalBoost = 1.0f; 
+    public float rootMotionForwardBoost = 1.0f; 
+
+    [Header("Cooldown")]
+    public float climbCooldown = 3.0f; 
+    private float finishClimbTime = -999f; 
+
+    // --- CODE JUMP PAD ---
     [Header("External Launch (JumpPad)")]
-    [Tooltip("Smoothing de la poussée externe (plus grand = s'arrête plus vite)")]
     public float externalDamping = 8f;
+    private Vector3 externalVelocity = Vector3.zero; 
+    // ---------------------
+
+    private bool canGrabLedge = false;
+    private bool isClimbing = false;
+    private bool isMantling = false;   
 
     private CharacterController controller;
     private Vector3 verticalVelocity;
     private Vector3 planarVelocity;
-
-    private Vector3 externalVelocity = Vector3.zero; // <-- impulsion du jump pad
+    
+    private RaycastHit omniHitInfo; 
 
     void Awake()
     {
@@ -47,137 +61,205 @@ public class PlayerControllerCC : MonoBehaviour
         if (!cameraTransform && Camera.main) cameraTransform = Camera.main.transform;
     }
 
-    /// <summary>
-    /// Appelé par JumpPad.cs
-    /// Donne une impulsion vers le haut + optionnel forward
-    /// </summary>
     public void ExternalLaunch(float upSpeed, float forwardSpeed, Vector3 forwardDir)
     {
-        // Reset vertical pour que la poussée soit bien "franche"
-        verticalVelocity.y = 0f;
-
-        // Ajoute une impulsion (velocity change)
+        verticalVelocity = Vector3.zero; 
         externalVelocity = (Vector3.up * upSpeed) + (forwardDir.normalized * forwardSpeed);
-
-        // Optionnel : petit trigger anim si tu veux
-        if (animator) animator.SetTrigger("Jump");
+        if (animator) animator.SetTrigger("Jump"); 
     }
 
     void Update()
     {
+        externalVelocity = Vector3.Lerp(externalVelocity, Vector3.zero, externalDamping * Time.deltaTime);
+
+        if (isMantling) return; 
+
         bool isGrounded = controller.isGrounded;
+        Vector2 input = GetInput();
+        
+        // INPUTS
+        bool jumpPressedThisFrame = Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame;
+        bool jumpIsHeld = Keyboard.current != null && Keyboard.current.spaceKey.isPressed;
 
-        // --- Ground stick
-        if (isGrounded && verticalVelocity.y < 0f)
-            verticalVelocity.y = -2f;
+        // DETECTION
+        DetectLedgeAround();
 
-        // =========================
-        // INPUT (NEW INPUT SYSTEM)
-        // =========================
-        Vector2 input = Vector2.zero;
+        // LOGIQUE
+        bool isCooldownOver = Time.time >= finishClimbTime + climbCooldown;
 
-        if (Keyboard.current != null)
+        // Condition : On grimpe SI on détecte un mur ET qu'on MAINTIENT Espace
+        if (!isClimbing && !isGrounded && canGrabLedge && isCooldownOver && jumpIsHeld)
         {
-            if (Keyboard.current.wKey.isPressed || Keyboard.current.zKey.isPressed)
-                input.y += 1f;
-            if (Keyboard.current.sKey.isPressed)
-                input.y -= 1f;
-            if (Keyboard.current.aKey.isPressed || Keyboard.current.qKey.isPressed)
-                input.x -= 1f;
-            if (Keyboard.current.dKey.isPressed)
-                input.x += 1f;
+            StartClimbing();
         }
 
-        input = Vector2.ClampMagnitude(input, 1f);
+        if (isClimbing)
+        {
+            StartCoroutine(MantleRoutine());
+        }
+        
+        if (isClimbing && isGrounded) isClimbing = false;
 
-        bool jumpPressed =
-            Keyboard.current != null &&
-            Keyboard.current.spaceKey.wasPressedThisFrame;
+        if (!isClimbing) HandleWalking(input, isGrounded, jumpPressedThisFrame);
 
-        // =========================
-        // CAMERA RELATIVE MOVE
-        // =========================
+        UpdateAnimator(isGrounded);
+    }
+
+    void DetectLedgeAround()
+    {
+        canGrabLedge = false;
+        float scaleY = transform.localScale.y;
+        Vector3 detectionCenter = transform.position + Vector3.up * (bodyRayHeight * scaleY);
+
+        Collider[] hitColliders = Physics.OverlapSphere(detectionCenter, detectionRadius, climbLayer);
+        
+        foreach (Collider wall in hitColliders)
+        {
+            Vector3 closestPoint = wall.ClosestPoint(detectionCenter);
+            
+            // FILTRE DE HAUTEUR
+            if (closestPoint.y < transform.position.y + minLedgeHeight) 
+            {
+                continue; 
+            }
+
+            Vector3 directionToWall = (closestPoint - detectionCenter).normalized;
+            Vector3 headCheckOrigin = transform.position + Vector3.up * (headRayHeight * scaleY);
+            
+            bool hitHead = Physics.Raycast(headCheckOrigin, directionToWall, detectionRadius + 0.5f, climbLayer);
+
+            if (!hitHead)
+            {
+                canGrabLedge = true;
+                omniHitInfo = new RaycastHit();
+                omniHitInfo.point = closestPoint;
+                omniHitInfo.normal = -directionToWall;
+                omniHitInfo.distance = Vector3.Distance(detectionCenter, closestPoint);
+                break; 
+            }
+        }
+    }
+
+    // --- DEBUG CORRIGÉ ---
+    void OnDrawGizmos()
+    {
+        if (transform == null) return;
+
+        float scaleY = transform.localScale.y;
+        Vector3 detectionCenter = transform.position + Vector3.up * (bodyRayHeight * scaleY);
+
+        Gizmos.color = new Color(1, 0.92f, 0.016f, 0.3f); 
+        Gizmos.DrawSphere(detectionCenter, detectionRadius);
+
+        // ICI J'AI REMPLACÉ DrawWireDisc PAR DrawWireCube (Compatible partout)
+        Gizmos.color = Color.blue;
+        Vector3 floorLimit = transform.position + Vector3.up * minLedgeHeight;
+        Gizmos.DrawWireCube(floorLimit, new Vector3(2, 0.05f, 2));
+
+        if (canGrabLedge)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(detectionCenter, omniHitInfo.point);
+            Gizmos.DrawSphere(omniHitInfo.point, 0.1f);
+        }
+    }
+
+    void OnAnimatorMove()
+    {
+        if (isMantling && animator)
+        {
+            Vector3 velocity = animator.deltaPosition;
+            velocity.y *= rootMotionVerticalBoost;
+            Vector3 forwardMove = transform.forward * velocity.magnitude * rootMotionForwardBoost;
+            velocity.x = forwardMove.x;
+            velocity.z = forwardMove.z;
+            controller.Move(velocity);
+            transform.rotation *= animator.deltaRotation;
+        }
+    }
+
+    IEnumerator MantleRoutine()
+    {
+        isMantling = true; 
+        isClimbing = false; 
+        
+        planarVelocity = Vector3.zero;
+        verticalVelocity = Vector3.zero;
+        externalVelocity = Vector3.zero; 
+
+        if (omniHitInfo.normal != Vector3.zero)
+        {
+            Vector3 lookDirection = -omniHitInfo.normal;
+            lookDirection.y = 0; 
+            if(lookDirection != Vector3.zero)
+            {
+                transform.rotation = Quaternion.LookRotation(lookDirection);
+            }
+        }
+        
+        if(animator) animator.SetTrigger("Mantle");
+
+        yield return new WaitForSeconds(1.5f); 
+
+        controller.Move(Vector3.down * 5.0f);
+
+        finishClimbTime = Time.time;
+        isMantling = false; 
+        verticalVelocity = Vector3.zero; 
+    }
+
+    Vector2 GetInput() {
+        Vector2 input = Vector2.zero;
+        if (Keyboard.current != null) {
+            if (Keyboard.current.wKey.isPressed || Keyboard.current.zKey.isPressed) input.y += 1f;
+            if (Keyboard.current.sKey.isPressed) input.y -= 1f;
+            if (Keyboard.current.aKey.isPressed || Keyboard.current.qKey.isPressed) input.x -= 1f;
+            if (Keyboard.current.dKey.isPressed) input.x += 1f;
+        }
+        return Vector2.ClampMagnitude(input, 1f);
+    }
+
+    void StartClimbing() { isClimbing = true; verticalVelocity = Vector3.zero; planarVelocity = Vector3.zero; }
+
+    void HandleClimbing(Vector2 input, bool jumpPressed, RaycastHit wallHit) { }
+
+    void HandleWalking(Vector2 input, bool isGrounded, bool jumpPressed) {
+        if (isGrounded && verticalVelocity.y < 0f) verticalVelocity.y = -2f;
+        
         Vector3 camForward = cameraTransform ? cameraTransform.forward : Vector3.forward;
         Vector3 camRight = cameraTransform ? cameraTransform.right : Vector3.right;
-
-        camForward.y = 0f;
-        camRight.y = 0f;
-        camForward.Normalize();
-        camRight.Normalize();
-
+        camForward.y = 0f; camRight.y = 0f; camForward.Normalize(); camRight.Normalize();
+        
         Vector3 moveDir = camForward * input.y + camRight * input.x;
-
-        // =========================
-        // HORIZONTAL VELOCITY
-        // =========================
         float maxSpeed = moveSpeed * (isGrounded ? 1f : airSpeedMultiplier);
+        
         Vector3 targetPlanarVelocity = moveDir * maxSpeed;
-
-        float accel = isGrounded
-            ? (input.sqrMagnitude > 0.01f ? groundAcceleration : groundDeceleration)
-            : airAcceleration;
-
-        planarVelocity = Vector3.MoveTowards(
-            planarVelocity,
-            targetPlanarVelocity,
-            accel * Time.deltaTime
-        );
-
-        // =========================
-        // ROTATION (léger smoothing)
-        // =========================
-        Vector3 lookDir = planarVelocity;
-        lookDir.y = 0f;
-
-        if (lookDir.sqrMagnitude > 0.05f)
-        {
+        float accel = isGrounded ? (input.sqrMagnitude > 0.01f ? groundAcceleration : groundDeceleration) : airAcceleration;
+        
+        planarVelocity = Vector3.MoveTowards(planarVelocity, targetPlanarVelocity, accel * Time.deltaTime);
+        
+        Vector3 finalVelocity = planarVelocity + verticalVelocity + externalVelocity;
+        controller.Move(finalVelocity * Time.deltaTime);
+        
+        Vector3 lookDir = planarVelocity; lookDir.y = 0f;
+        if (lookDir.sqrMagnitude > 0.05f) {
             Quaternion targetRot = Quaternion.LookRotation(lookDir.normalized, Vector3.up);
-            transform.rotation = Quaternion.Slerp(
-                transform.rotation,
-                targetRot,
-                rotationSpeed * Time.deltaTime
-            );
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotationSpeed * Time.deltaTime);
         }
-
-        // =========================
-        // JUMP
-        // =========================
-        if (jumpPressed && isGrounded)
-        {
+        
+        if (jumpPressed && isGrounded) {
             verticalVelocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             if (animator) animator.SetTrigger("Jump");
         }
-
-        // =========================
-        // GRAVITY
-        // =========================
+        
         verticalVelocity.y += gravity * Time.deltaTime;
+    }
 
-        // =========================
-        // FINAL MOVE (planar + vertical + external)
-        // =========================
-        Vector3 finalMove =
-            planarVelocity +
-            verticalVelocity +
-            externalVelocity;
-
-        controller.Move(finalMove * Time.deltaTime);
-
-        // Damping de la poussée externe (pour pas rester boosté)
-        externalVelocity = Vector3.Lerp(externalVelocity, Vector3.zero, externalDamping * Time.deltaTime);
-
-        // =========================
-        // ANIMATOR PARAMETERS
-        // =========================
-        if (animator)
-        {
-            float speed01 = Mathf.Clamp01(
-                new Vector3(planarVelocity.x, 0f, planarVelocity.z).magnitude / moveSpeed
-            );
-
-            animator.SetFloat("Speed", speed01);
-            animator.SetBool("IsGrounded", isGrounded);
-            animator.SetFloat("YVelocity", verticalVelocity.y);
-        }
+    void UpdateAnimator(bool isGrounded) {
+        if (!animator) return;
+        float speed01 = Mathf.Clamp01(new Vector3(planarVelocity.x, 0f, planarVelocity.z).magnitude / moveSpeed);
+        animator.SetFloat("Speed", speed01);
+        animator.SetBool("IsGrounded", isGrounded);
+        animator.SetFloat("YVelocity", verticalVelocity.y);
     }
 }
