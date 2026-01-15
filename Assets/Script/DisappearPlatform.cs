@@ -4,37 +4,44 @@ using UnityEngine;
 public class DisappearPlatform : MonoBehaviour
 {
     [Header("Timing")]
-    [Tooltip("Temps avant que la plateforme disparaisse")]
-    public float delayBeforeDisappear = 0.15f;
-
-    [Tooltip("Temps avant réapparition")]
-    public float respawnAfter = 5f; // ⬅️ 5 secondes
+    public float delayBeforeDisappear = 2f;
+    public float respawnAfter = 6f; // <- 5 secondes
 
     [Header("What to disable")]
-    public GameObject visualsRoot;          
-    public Collider solidColliderToDisable; 
-    public Collider triggerCollider;        
+    [Tooltip("Si vide: on prend tous les Renderers du GameObject et de ses enfants")]
+    public Transform visualsRoot; // on ne désactive PAS le GameObject, juste ses renderers
 
+    [Tooltip("Collider solide (IsTrigger OFF). Si vide -> auto")]
+    public Collider solidColliderToDisable;
+
+    [Tooltip("Collider trigger (IsTrigger ON). Si vide -> auto")]
+    public Collider triggerCollider;
+
+    private Renderer[] cachedRenderers;
     private bool isRunning;
 
     void Awake()
     {
         if (visualsRoot == null)
-            visualsRoot = gameObject;
+            visualsRoot = transform;
 
-        // Auto-détection des colliders
-        Collider[] cols = GetComponents<Collider>();
-        foreach (var c in cols)
+        // Cache tous les renderers (visuels) du root
+        cachedRenderers = visualsRoot.GetComponentsInChildren<Renderer>(true);
+
+        // Auto-find colliders if not assigned
+        if (solidColliderToDisable == null || triggerCollider == null)
         {
-            if (c.isTrigger)
+            Collider[] cols = GetComponents<Collider>();
+            foreach (var c in cols)
             {
-                if (triggerCollider == null)
-                    triggerCollider = c;
-            }
-            else
-            {
-                if (solidColliderToDisable == null)
-                    solidColliderToDisable = c;
+                if (c.isTrigger)
+                {
+                    if (triggerCollider == null) triggerCollider = c;
+                }
+                else
+                {
+                    if (solidColliderToDisable == null) solidColliderToDisable = c;
+                }
             }
         }
     }
@@ -42,7 +49,6 @@ public class DisappearPlatform : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (isRunning) return;
-
         if (!other.CompareTag("Player")) return;
 
         StartCoroutine(DisappearRoutine());
@@ -54,16 +60,22 @@ public class DisappearPlatform : MonoBehaviour
 
         yield return new WaitForSeconds(delayBeforeDisappear);
 
-        // Disparition
-        visualsRoot.SetActive(false);
+        // Cacher visuel (sans désactiver le GameObject)
+        foreach (var r in cachedRenderers)
+            if (r) r.enabled = false;
+
+        // Désactiver collider solide
         if (solidColliderToDisable) solidColliderToDisable.enabled = false;
+
+        // Optionnel : désactiver trigger pour éviter spam
         if (triggerCollider) triggerCollider.enabled = false;
 
-        // Attente avant respawn
         yield return new WaitForSeconds(respawnAfter);
 
-        // Réapparition
-        visualsRoot.SetActive(true);
+        // Réactiver
+        foreach (var r in cachedRenderers)
+            if (r) r.enabled = true;
+
         if (solidColliderToDisable) solidColliderToDisable.enabled = true;
         if (triggerCollider) triggerCollider.enabled = true;
 
