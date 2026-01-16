@@ -5,8 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5346a845-6edb-4dda-867c-a2c3ca0d8adf" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Assets/UI/Fonts/TMP/LuckiestGuy-Regular SDF.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UI/Fonts/TMP/LuckiestGuy-Regular SDF.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/UI/Fonts/TMP/LuckiestGuy_ToyStory.mat.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UI/Fonts/TMP/LuckiestGuy_ToyStory.mat.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/COCHONPLATFORME.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/COCHONPLATFORME.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,7 +17,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/Assets/Script/MultiSceneLoader.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.render-pipelines.universal@e6a37f17fabd/Shaders/Lit.shader" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -28,22 +28,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "PRATS__noah",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;PRATS__noah&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor">
     <configuration name="Start Unity" type="RunUnityExe" factoryName="Unity Executable">
       <option name="EXE_PATH" value="C:\Program Files\Unity\Hub\Editor\6000.2.13f1\Editor\Unity.exe" />
@@ -91,6 +91,7 @@
       <updated>1768514503131</updated>
       <workItem from="1768514508090" duration="343000" />
       <workItem from="1768517521308" duration="1852000" />
+      <workItem from="1768547142353" duration="1292000" />
     </task>
     <servers />
   </component>
