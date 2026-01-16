@@ -47,10 +47,8 @@ et éléments d’environnement comme les JumpPads.
 
 ## 👥 Contributeurs & contributions (synthèse)
 Cette section résume les apports majeurs sans exposer l’historique des commits.
-- **Noah** : colliders, plateformes, ajustements de scène et repères de progression.
-- **LIJGE** : déplacement/animation personnage et itérations caméra.
-- **Guillaume** : UI de menu (scènes, scripts, audio), packages et réglages projet.
-- **JLEliot** : layout de scène, améliorations caméra, colliders et correctifs UI.
-- **Benjamin Djaoui** : système d’escalade et ajout de l’extérieur.
-- **Guirw7** : intégration de PRs.
+- **Noah** : colliders, plateformes, ajustements de scène et repères de progression, ajout et gestion de la skybox.
+- **Camille** : déplacement/animation personnage et itérations caméra, layout de scène, améliorations caméra, colliders et correctifs UI, ajout et gestion de la skybox.
+- **Guillaume** : UI de menu (scènes, scripts, audio), packages et réglages projet,intégration de PRs.
+- **Benjamin Djaoui** : système d’escalade.
 
