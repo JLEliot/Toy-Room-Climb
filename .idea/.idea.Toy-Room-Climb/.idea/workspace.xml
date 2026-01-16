@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5346a845-6edb-4dda-867c-a2c3ca0d8adf" name="Changes" comment="" />
+    <list default="true" id="5346a845-6edb-4dda-867c-a2c3ca0d8adf" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Assets/UI/Fonts/TMP/LuckiestGuy-Regular SDF.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UI/Fonts/TMP/LuckiestGuy-Regular SDF.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/UI/Fonts/TMP/LuckiestGuy_ToyStory.mat.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UI/Fonts/TMP/LuckiestGuy_ToyStory.mat.asset" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -87,7 +90,7 @@
       <option name="presentableId" value="Default" />
       <updated>1768514503131</updated>
       <workItem from="1768514508090" duration="343000" />
-      <workItem from="1768517521308" duration="1262000" />
+      <workItem from="1768517521308" duration="1852000" />
     </task>
     <servers />
   </component>
